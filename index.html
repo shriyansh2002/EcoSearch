@@ -511,7 +511,7 @@
             <div class="form-container">
                 <form class="waitlist-form" name="waitlist" method="POST" data-netlify="true" netlify>
                     <input type="hidden" name="form-name" value="waitlist">
-                    <input type="email" name="email" placeholder="name@email.com" required data-netlify="true" netlify>
+                    <input type="email" name="email" placeholder="name@email.com" required>
                     <button type="submit">Join the waitlist <i class="fas fa-arrow-right"></i></button>
                 </form>
                 
@@ -567,15 +567,29 @@
             const errorMessage = document.querySelector('.error-message');
 
             form.addEventListener('submit', function(e) {
-                e.preventDefault();
-                
-                const formData = new FormData(form);
-                
-                // Show success message for demo purposes
-                form.style.display = 'none';
-                successMessage.style.display = 'block';
-                errorMessage.style.display = 'none';
+            e.preventDefault();
+            const formData = new FormData(form);
+
+            fetch('/', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (response.ok) {
+                    form.style.display = 'none';
+                    successMessage.style.display = 'block';
+                    errorMessage.style.display = 'none';
+                } else {
+                    throw new Error('Submission failed');
+                }
+            })
+            .catch(error => {
+                form.style.display = 'block';
+                successMessage.style.display = 'none';
+                errorMessage.style.display = 'block';
+                console.error('Error:', error);
             });
+        });
             
             // Create floating leaf effect
             function createLeaf() {
